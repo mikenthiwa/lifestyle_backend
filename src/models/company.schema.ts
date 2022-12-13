@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { User } from './user.schema';
+import { User } from '../modules/auth/schema/user.schema';
 
 export type CompanyDocument = HydratedDocument<Company>;
 
@@ -28,7 +28,7 @@ export class Company {
   @Prop({ required: true })
   Instagram: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: User._id }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: User }] })
   admin: User[];
 }
 
