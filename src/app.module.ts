@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { AppService } from './app.service';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AppService } from './app.service';
       isGlobal: true,
     }),
     AuthModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

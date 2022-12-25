@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  HttpStatus,
-  NotFoundException,
-  UnauthorizedException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -44,7 +38,7 @@ export class AuthService {
       if (err.status === 404) {
         throw new NotFoundException({
           success: false,
-          status: HttpStatus.NOT_FOUND,
+          statusCode: HttpStatus.NOT_FOUND,
           errorMessage:
             "Sorry, these details aren't familiar to us, please take a look and try again",
         });
@@ -90,7 +84,10 @@ export class AuthService {
 
   async getCookiesForUser(user: any) {
     const id = user._id;
-    const accessTokenCookie = this.generateCookieWithAccessToken(id);
+    const accessTokenCookie = this.generateCookieWithAccessToken(
+      id,
+      user.email,
+    );
     const { cookie: refreshTokenCookie, token: refreshToken } =
       this.generateCookieWithRefreshToken(id);
     await this.userService.setCurrentRefreshToken(refreshToken, id);
@@ -98,8 +95,8 @@ export class AuthService {
     return { accessTokenCookie, refreshTokenCookie };
   }
 
-  generateCookieWithAccessToken(userId: number) {
-    const payload = { userId };
+  generateCookieWithAccessToken(userId: number, email: string) {
+    const payload = { userId, email };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET_KEY'),
       expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRY_TIME')}s`,
