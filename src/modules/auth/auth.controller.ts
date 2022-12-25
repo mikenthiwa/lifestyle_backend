@@ -22,6 +22,7 @@ import {
 } from './dto/auth.dto';
 import { JwtAuthGuard } from './guard/JwtAuthGuard.guard';
 import JwtRefreshGuard from './guard/jwtRefresh.guard';
+import { RolesGuard } from './guard/role.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -37,8 +38,8 @@ export class AuthController {
   }
 
   @HttpCode(200)
-  @UseGuards(LocalAuthGuard)
   @Roles(Role.Admin)
+  @UseGuards(LocalAuthGuard, RolesGuard)
   @Post('login/partner')
   async loginPartner(
     @Body() partnerLoginBody: PartnerLoginBody,
@@ -54,7 +55,7 @@ export class AuthController {
     ]);
     return response.send({
       success: true,
-      status: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       accessToken: accessTokenCookie,
       refreshToken: refreshTokenCookie,
     });
@@ -75,7 +76,7 @@ export class AuthController {
     ]);
     return response.send({
       success: true,
-      status: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       accessToken: accessTokenCookie,
       refreshToken: refreshTokenCookie,
     });
@@ -86,11 +87,12 @@ export class AuthController {
   refresh(@Req() request: any, @Res() response: any) {
     const accessTokenCookie = this.authService.generateCookieWithAccessToken(
       request.user._id,
+      request.user.email,
     );
     request.res.setHeader('Set-Cookie', accessTokenCookie);
     return response.send({
       success: true,
-      status: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       accessToken: accessTokenCookie,
     });
   }
@@ -102,7 +104,7 @@ export class AuthController {
     response.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
     return response.send({
       success: true,
-      status: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       message: 'User logged out successfully',
     });
   }

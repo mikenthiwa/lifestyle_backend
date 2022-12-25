@@ -1,14 +1,15 @@
 import {
   CanActivate,
   ExecutionContext,
+  Injectable,
   HttpStatus,
   ForbiddenException,
-  Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
 
+import { ROLES_KEY } from '../decorators/roles.decorator';
 import { Role } from '../schema/user.schema';
 import { UsersService } from '../../users/users.service';
 
@@ -17,19 +18,30 @@ export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
     private userService: UsersService,
+    private jwtService: JwtService,
   ) {}
 
+  decodeRefreshToken(token: string) {
+    return this.jwtService.decode(token);
+  }
+
   async canActivate(context: ExecutionContext): Promise<any> {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (!requiredRoles) {
-      return true;
-    }
-    const { body } = context.switchToHttp().getRequest();
     try {
-      const user = await this.userService.findUserByEmail(body.email);
+      const requiredRoles = this.reflector.getAllAndOverride<Role[]>(
+        ROLES_KEY,
+        [context.getHandler(), context.getClass()],
+      );
+      if (!requiredRoles) {
+        return true;
+      }
+      const {
+        body,
+        cookies: { Authentication },
+        cookies,
+      } = context.switchToHttp().getRequest();
+      const Cookie = JSON.stringify(cookies) !== '{}';
+      const data = Cookie ? this.decodeRefreshToken(Authentication) : body;
+      const user = await this.userService.findUserByEmail(data.email);
       if (user) {
         return requiredRoles.some((role) => {
           if (user.role?.includes(role)) return true;
@@ -41,13 +53,13 @@ export class RolesGuard implements CanActivate {
       if (error.status === 403) {
         throw new ForbiddenException({
           success: false,
-          status: HttpStatus.FORBIDDEN,
+          statusCode: HttpStatus.FORBIDDEN,
           errorMessage: 'Forbidden resource',
         });
       } else if (error.status === 404) {
         throw new NotFoundException({
           success: false,
-          status: HttpStatus.NOT_FOUND,
+          statusCode: HttpStatus.NOT_FOUND,
           errorMessage:
             "Sorry, these details aren't familiar to us, please take a look and try again",
         });
