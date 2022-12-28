@@ -3,10 +3,13 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { User } from '../../auth/schema/user.schema';
 
-export type CompanyDocument = HydratedDocument<Company>;
+export type PartnerDocument = HydratedDocument<Partner>;
 
 @Schema()
-export class Company {
+export class Partner {
+  @Prop({ type: mongoose.Types.ObjectId })
+  static _id: string;
+
   @Prop({ required: true })
   name: string;
 
@@ -16,20 +19,20 @@ export class Company {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: true })
+  @Prop()
   logo: string;
 
-  @Prop({ required: true })
+  @Prop()
   facebook: string;
 
   @Prop()
   twitter: string;
 
-  @Prop({ required: true })
+  @Prop()
   Instagram: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: User }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
   admin: User[];
 }
 
-export const CompanySchema = SchemaFactory.createForClass(Company);
+export const PartnerSchema = SchemaFactory.createForClass(Partner);
