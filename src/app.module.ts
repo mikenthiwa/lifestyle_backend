@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './modules/auth/auth.module';
 import { AppService } from './app.service';
 import { SettingsModule } from './modules/settings/settings.module';
+import { PartnersModule } from './modules/partners/partners.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SettingsModule } from './modules/settings/settings.module';
       isGlobal: true,
     }),
     AuthModule,
+    PartnersModule,
     SettingsModule,
   ],
   controllers: [AppController],
