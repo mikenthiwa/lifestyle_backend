@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose';
-import { Exclude } from 'class-transformer';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';

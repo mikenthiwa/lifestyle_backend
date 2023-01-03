@@ -7,6 +7,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AppService } from './app.service';
 import { SettingsModule } from './modules/settings/settings.module';
 import { PartnersModule } from './modules/partners/partners.module';
+import { ToursModule } from './modules/lifestyle/tours/tours.module';
+import { LifestyleModule } from './modules/lifestyle/lifestyle.module';
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { PartnersModule } from './modules/partners/partners.module';
     AuthModule,
     PartnersModule,
     SettingsModule,
+    LifestyleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

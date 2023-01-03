@@ -41,16 +41,15 @@ export class PartnersService {
     }
   }
 
-  async getPartner(userId: string): Promise<void> {
+  async getPartner(userId: string): Promise<any> {
     try {
       const partner = await this.partnerModal
         .findOne({
           admin: { $elemMatch: { $eq: userId } },
         })
         .lean();
-      const { admin, _id, ...result } = partner;
+      const { admin, ...result } = partner;
       return result;
-      return partner;
     } catch (error) {
       throw new InternalServerErrorException({
         success: false,
