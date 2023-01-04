@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import { Model } from 'mongoose';
 import { Trip } from './model/trips.schema';
 import { PartnersService } from '../../partners/partners.service';
-import mongoose from 'mongoose';
+import { ThrowException } from '../../../lib/helper';
 
 @Injectable()
 export class ToursService {
@@ -22,7 +23,17 @@ export class ToursService {
       createdTrip.save();
       return createdTrip;
     } catch (error) {
-      console.log('error', error);
+      const { response } = error;
+      ThrowException(response.statusCode);
+    }
+  }
+
+  async getTrips(): Promise<any> {
+    try {
+      return this.tripModel.find().lean();
+    } catch (error) {
+      const { response } = error;
+      ThrowException(response);
     }
   }
 
@@ -30,18 +41,40 @@ export class ToursService {
     try {
       const tripDoc = await this.tripModel.findOne({ _id: tripID }).lean();
       const partner = await this.partnerService.getPartner(userId);
-      if (partner._id.toHexString() === tripDoc.partner.toHexString()) {
+      if (
+        tripDoc &&
+        partner._id.toHexString() === tripDoc.partner.toHexString()
+      ) {
         const { tripId, ...result } = trip;
-        const updatedTripDocument = await this.tripModel.updateOne(
+        return this.tripModel.updateOne(
           { _id: new mongoose.Types.ObjectId(tripID) },
           { $set: { ...result } },
         );
-        return updatedTripDocument;
       } else {
-        console.log('Forbidden resource');
+        throw new ForbiddenException('You cannot perform this action!');
       }
-    } catch (e) {
-      console.log('e', e);
+    } catch (error) {
+      const { response } = error;
+      ThrowException(response);
+    }
+  }
+
+  async deleteTrip(userId: string, tripID: any): Promise<any> {
+    try {
+      const tripDoc = await this.tripModel.findOne({ _id: tripID }).lean();
+      const partner = await this.partnerService.getPartner(userId);
+      if (
+        tripDoc &&
+        partner._id.toHexString() === tripDoc.partner.toHexString()
+      ) {
+        return this.tripModel.deleteOne({
+          _id: new mongoose.Types.ObjectId(tripID),
+        });
+      }
+      throw new ForbiddenException('You cannot perform this action!');
+    } catch (error) {
+      const { response } = error;
+      ThrowException(response);
     }
   }
 }

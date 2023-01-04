@@ -2,6 +2,7 @@ import {
   Controller,
   UseGuards,
   Post,
+  Get,
   Request,
   Response,
   Body,
@@ -12,7 +13,7 @@ import { Role } from '../../auth/schema/user.schema';
 import { JwtAuthGuard } from '../../auth/guard/JwtAuthGuard.guard';
 import { RolesGuard } from '../../auth/guard/role.guard';
 import { ToursService } from './tours.service';
-import { TripBodyDTO, UpdateTripBody } from './dto/tours.dto';
+import { TripBodyDTO, UpdateTripBody, DeleteTripBody } from './dto/tours.dto';
 
 @Controller('tours')
 export class ToursController {
@@ -38,6 +39,17 @@ export class ToursController {
     });
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/trips')
+  async getTrips(@Request() req: any, @Response() res: any): Promise<any> {
+    const tripDoc = await this.tourService.getTrips();
+    res.send({
+      success: true,
+      statusCode: HttpStatus.OK,
+      response: tripDoc,
+    });
+  }
+
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('/update_trip')
@@ -54,7 +66,23 @@ export class ToursController {
     res.send({
       success: true,
       statusCode: HttpStatus.OK,
-      message: 'Updated successfully',
+      message: 'Trip Updated successfully',
+    });
+  }
+
+  @Roles(Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('/delete_trip')
+  async deleteTrip(
+    @Request() req: any,
+    @Response() res: any,
+    @Body() deleteTripBody: DeleteTripBody,
+  ): Promise<any> {
+    await this.tourService.deleteTrip(req.user._id, deleteTripBody.tripId);
+    res.send({
+      success: true,
+      statusCode: HttpStatus.OK,
+      message: 'Trip deleted successfully',
     });
   }
 }

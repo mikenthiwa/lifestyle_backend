@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsArray } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsArray, IsString } from 'class-validator';
 
 export class TripBodyDTO {
   @IsNotEmpty()
@@ -67,4 +67,10 @@ export class UpdateTripBody {
   @IsOptional()
   @IsArray()
   inclusive: Array<string>;
+}
+
+export class DeleteTripBody {
+  @IsNotEmpty()
+  @IsString()
+  tripId: string;
 }
