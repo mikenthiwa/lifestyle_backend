@@ -1,5 +1,4 @@
 import * as mongoose from 'mongoose';
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import { Partner } from '../../../partners/model/partner.schema';
@@ -40,6 +39,9 @@ export class Trip {
 
   @Prop({ required: false })
   inclusive: Array<string>;
+
+  @Prop({ type: String, unique: true })
+  slug: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Partner' })
   partner: Partner;

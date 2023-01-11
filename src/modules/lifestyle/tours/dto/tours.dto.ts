@@ -33,6 +33,11 @@ export class TripBodyDTO {
   inclusive: Array<string>;
 }
 
+export class SelectedTripBody {
+  @IsNotEmpty()
+  tripId: string;
+}
+
 export class UpdateTripBody {
   @IsNotEmpty()
   tripId: string;

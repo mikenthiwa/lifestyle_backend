@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 import { Trip } from './model/trips.schema';
 import { PartnersService } from '../../partners/partners.service';
 import { ThrowException } from '../../../lib/helper';
+import slugify from 'slugify';
+import { uuid, generate } from 'short-uuid';
 
 @Injectable()
 export class ToursService {
@@ -15,10 +17,20 @@ export class ToursService {
 
   async createTrip(userId: string, TripData: any): Promise<any> {
     const partner = await this.partnerService.getPartner(userId);
+    const slug = slugify(TripData.tripName, {
+      replacement: '-',
+      remove: undefined,
+      lower: true,
+      strict: true,
+      trim: true,
+      locale: 'vi',
+    });
+
     try {
       const createdTrip = await new this.tripModel({
         ...TripData,
         partner: partner._id,
+        slug: slug + '-' + generate(),
       });
       createdTrip.save();
       return createdTrip;
@@ -31,6 +43,15 @@ export class ToursService {
   async getTrips(): Promise<any> {
     try {
       return this.tripModel.find().lean();
+    } catch (error) {
+      const { response } = error;
+      ThrowException(response);
+    }
+  }
+
+  async selectTrips(tripId: string): Promise<any> {
+    try {
+      return this.tripModel.findOne({ _id: tripId });
     } catch (error) {
       const { response } = error;
       ThrowException(response);
