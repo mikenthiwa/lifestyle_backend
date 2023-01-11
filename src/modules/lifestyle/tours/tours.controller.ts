@@ -3,6 +3,7 @@ import {
   UseGuards,
   Post,
   Get,
+  Param,
   Request,
   Response,
   Body,
@@ -56,13 +57,13 @@ export class ToursController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get(':id')
+  @Get(':slug')
   async getSelectedTrip(
     @Request() req: any,
     @Response() res: any,
-    @Body() selectedTripBody: SelectedTripBody,
+    @Param('slug') slug: string,
   ): Promise<any> {
-    const tripDoc = this.tourService.selectTrips(selectedTripBody.tripId);
+    const tripDoc = await this.tourService.selectTrips(slug);
     res.send({
       success: true,
       statusCode: HttpStatus.OK,

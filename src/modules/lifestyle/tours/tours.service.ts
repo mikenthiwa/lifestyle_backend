@@ -6,7 +6,7 @@ import { Trip } from './model/trips.schema';
 import { PartnersService } from '../../partners/partners.service';
 import { ThrowException } from '../../../lib/helper';
 import slugify from 'slugify';
-import { uuid, generate } from 'short-uuid';
+import { generate } from 'short-uuid';
 
 @Injectable()
 export class ToursService {
@@ -49,9 +49,9 @@ export class ToursService {
     }
   }
 
-  async selectTrips(tripId: string): Promise<any> {
+  async selectTrips(slug: string): Promise<any> {
     try {
-      return this.tripModel.findOne({ _id: tripId });
+      return this.tripModel.findOne({ slug }).lean();
     } catch (error) {
       const { response } = error;
       ThrowException(response);

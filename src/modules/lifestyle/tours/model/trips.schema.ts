@@ -40,6 +40,9 @@ export class Trip {
   @Prop({ required: false })
   inclusive: Array<string>;
 
+  @Prop({ required: true })
+  tillNumber: number;
+
   @Prop({ type: String, unique: true })
   slug: string;
 
