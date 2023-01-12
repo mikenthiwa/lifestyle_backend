@@ -29,8 +29,16 @@ export class TripBodyDTO {
   arrivalTime: string;
 
   @IsNotEmpty()
+  tillNumber: number;
+
+  @IsNotEmpty()
   @IsArray()
   inclusive: Array<string>;
+}
+
+export class SelectedTripBody {
+  @IsNotEmpty()
+  slug: string;
 }
 
 export class UpdateTripBody {

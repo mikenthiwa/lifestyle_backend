@@ -3,6 +3,7 @@ import {
   UseGuards,
   Post,
   Get,
+  Param,
   Request,
   Response,
   Body,
@@ -13,7 +14,12 @@ import { Role } from '../../auth/schema/user.schema';
 import { JwtAuthGuard } from '../../auth/guard/JwtAuthGuard.guard';
 import { RolesGuard } from '../../auth/guard/role.guard';
 import { ToursService } from './tours.service';
-import { TripBodyDTO, UpdateTripBody, DeleteTripBody } from './dto/tours.dto';
+import {
+  TripBodyDTO,
+  UpdateTripBody,
+  DeleteTripBody,
+  SelectedTripBody,
+} from './dto/tours.dto';
 
 @Controller('tours')
 export class ToursController {
@@ -40,9 +46,24 @@ export class ToursController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('/trips')
+  @Get('')
   async getTrips(@Request() req: any, @Response() res: any): Promise<any> {
     const tripDoc = await this.tourService.getTrips();
+    res.send({
+      success: true,
+      statusCode: HttpStatus.OK,
+      response: tripDoc,
+    });
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get(':slug')
+  async getSelectedTrip(
+    @Request() req: any,
+    @Response() res: any,
+    @Param('slug') slug: string,
+  ): Promise<any> {
+    const tripDoc = await this.tourService.selectTrips(slug);
     res.send({
       success: true,
       statusCode: HttpStatus.OK,
