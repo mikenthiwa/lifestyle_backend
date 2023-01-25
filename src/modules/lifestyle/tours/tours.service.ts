@@ -29,7 +29,8 @@ export class ToursService {
     try {
       const createdTrip = await new this.tripModel({
         ...TripData,
-        partner: partner._id,
+        partner: partner.name,
+        logo: partner.logo,
         slug: slug + '-' + generate(),
       });
       createdTrip.save();
@@ -43,6 +44,17 @@ export class ToursService {
   async getTrips(): Promise<any> {
     try {
       return this.tripModel.find().lean();
+    } catch (error) {
+      const { response } = error;
+      ThrowException(response);
+    }
+  }
+
+  async getUpcomingTrips(): Promise<any> {
+    try {
+      return this.tripModel
+        .find({ departureDate: { $gte: Date.now() } })
+        .lean();
     } catch (error) {
       const { response } = error;
       ThrowException(response);
