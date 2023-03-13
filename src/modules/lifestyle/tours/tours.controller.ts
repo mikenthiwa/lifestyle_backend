@@ -56,7 +56,7 @@ export class ToursController {
     });
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('/upcoming_trips')
   async upComingTrips(@Request() req: any, @Response() res: any): Promise<any> {
     const tripDoc = await this.tourService.getUpcomingTrips();

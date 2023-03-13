@@ -77,8 +77,10 @@ export class AuthController {
     return response.send({
       success: true,
       statusCode: HttpStatus.OK,
+      isAuthenticated: true,
       accessToken: accessTokenCookie,
       refreshToken: refreshTokenCookie,
+      accessTokenExpiry: Date.now() / 1000 / 60 + 24 * 60,
     });
   }
 
@@ -94,6 +96,7 @@ export class AuthController {
       success: true,
       statusCode: HttpStatus.OK,
       accessToken: accessTokenCookie,
+      accessTokenExpiry: (Date.now() / 1000 / 60) * (24 * 60),
     });
   }
 
