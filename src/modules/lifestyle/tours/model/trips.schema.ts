@@ -13,11 +13,20 @@ export class Trip {
   @Prop({ required: true })
   tripName: string;
 
+  @Prop({ type: String, required: true })
+  logo: string;
+
   @Prop({ required: true })
   price: number;
 
   @Prop({ required: true })
   slots: number;
+
+  @Prop({ type: Number, required: false, default: 0 })
+  paidSlots: number;
+
+  @Prop({ type: Number, required: false, default: 0 })
+  availableSlots: number;
 
   @Prop({ required: true })
   departureDate: Date;
@@ -46,8 +55,8 @@ export class Trip {
   @Prop({ type: String, unique: true })
   slug: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Partner' })
-  partner: Partner;
+  @Prop({ type: String, required: true })
+  partner: string;
 }
 
 export const TripSchema = SchemaFactory.createForClass(Trip);
