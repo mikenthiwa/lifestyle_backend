@@ -96,7 +96,7 @@ export class AuthController {
       success: true,
       statusCode: HttpStatus.OK,
       accessToken: accessTokenCookie,
-      accessTokenExpiry: (Date.now() / 1000 / 60) * (24 * 60),
+      accessTokenExpiry: Date.now() / 1000 / 60 + 24 * 60,
     });
   }
 
